@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Camera Test Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .test-section {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        #testVideo {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 8px;
+            background: #000;
+            margin: 20px 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+
+        .btn-info:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.inactive {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #bee5eb;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            color: #856404;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+        }
+
+        .mock-camera-link {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .mock-camera-link a {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .mock-camera-link a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 Mock Camera Test Website</h1>
+            <p>Test your mock camera across different tabs and websites</p>
+        </header>
+
+        <div class="content">
+            <div class="info">
+                <strong>ℹ️ This is a test website.</strong> 
+                If you see your mock video instead of real camera, the mock camera system is working correctly!
+            </div>
+
+            <div class="mock-camera-link">
+                <h3>🎥 Mock Camera Control</h3>
+                <p>Open the mock camera interface to upload media and start the mock camera:</p>
+                <a href="standalone-mock-camera.html" target="_blank">Open Mock Camera Interface</a>
+            </div>
+
+            <div class="test-section">
+                <h3>📹 Camera Test</h3>
+                <p>Click "Start Camera" to test if the mock camera is working:</p>
+                <video id="testVideo" autoplay muted playsinline></video>
+                <div class="controls">
+                    <button class="btn btn-success" id="startCamera">📹 Start Camera</button>
+                    <button class="btn btn-danger" id="stopCamera">⏹️ Stop Camera</button>
+                    <button class="btn btn-info" id="checkStatus">🔍 Check Status</button>
+                </div>
+            </div>
+
+            <div class="status inactive" id="status">
+                Camera: Not Started
+            </div>
+
+            <div class="log" id="log">
+                <div>Console log will appear here...</div>
+            </div>
+
+            <div class="instructions">
+                <h3>📋 How to Test Cross-Tab Mock Camera</h3>
+                <ol>
+                    <li><strong>Open Mock Camera Interface:</strong> Click the "Open Mock Camera Interface" button above</li>
+                    <li><strong>Upload Media:</strong> In the new tab, upload a video or image file</li>
+                    <li><strong>Start Mock Camera:</strong> Click "Start Mock Camera" in the interface</li>
+                    <li><strong>Test This Page:</strong> Come back to this tab and click "Start Camera" below</li>
+                    <li><strong>Verify:</strong> You should see your mock video instead of real camera</li>
+                    <li><strong>Test Other Websites:</strong> Open any other website that uses camera - it should also show your mock feed</li>
+                </ol>
+            </div>
+
+            <div class="instructions">
+                <h3>🌐 Test on Other Websites</h3>
+                <p>Try these websites that use camera access:</p>
+                <ul style="color: #856404; padding-left: 20px;">
+                    <li><a href="https://webcamtest.com" target="_blank">Webcam Test</a></li>
+                    <li><a href="https://www.onlinemictest.com/webcam-test/" target="_blank">Online Mic Test - Webcam</a></li>
+                    <li><a href="https://www.browserleaks.com/webrtc" target="_blank">Browser Leaks - WebRTC</a></li>
+                    <li><a href="https://meet.google.com" target="_blank">Google Meet</a></li>
+                    <li><a href="https://zoom.us/test" target="_blank">Zoom Test</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include the global mock camera injection script -->
+    <script src="global-mock-inject.js"></script>
+
+    <script>
+        let currentStream = null;
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function updateStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function startCamera() {
+            log('Starting camera test...');
+            
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                    .then(stream => {
+                        currentStream = stream;
+                        const video = document.getElementById('testVideo');
+                        video.srcObject = stream;
+                        
+                        // Check if this is a mock stream
+                        const tracks = stream.getTracks();
+                        const videoTrack = tracks.find(track => track.kind === 'video');
+                        
+                        if (videoTrack) {
+                            const isMock = videoTrack.label.includes('Mock') || 
+                                          videoTrack.label.includes('Canvas') ||
+                                          videoTrack.deviceId === 'mock-camera' ||
+                                          videoTrack.label.includes('captureStream');
+                            
+                            if (isMock) {
+                                log('✅ Mock camera stream detected!');
+                                updateStatus('Mock Camera: Active', 'active');
+                            } else {
+                                log('⚠️ Real camera stream detected');
+                                updateStatus('Real Camera: Active', 'inactive');
+                            }
+                        }
+                        
+                        log('Camera stream started successfully');
+                    })
+                    .catch(error => {
+                        log(`❌ Error accessing camera: ${error.message}`);
+                        updateStatus('Camera Error', 'inactive');
+                    });
+            } else {
+                log('❌ getUserMedia not supported');
+                updateStatus('Camera Not Supported', 'inactive');
+            }
+        }
+
+        function stopCamera() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+                
+                const video = document.getElementById('testVideo');
+                video.srcObject = null;
+                
+                log('Camera stream stopped');
+                updateStatus('Camera: Stopped', 'inactive');
+            }
+        }
+
+        function checkStatus() {
+            log('Checking mock camera status...');
+            
+            // Check if extension is available
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+                log('✅ Chrome extension runtime available');
+                
+                // Check extension status
+                chrome.runtime.sendMessage({ action: 'getStatus' }, (response) => {
+                    if (response) {
+                        log(`Mock Camera Active: ${response.mockActive}`);
+                        log(`Mock Data Available: ${!!response.mockData}`);
+                        
+                        if (response.mockData) {
+                            log(`Mock Data Type: ${response.mockData.type}`);
+                            log(`Mock Data Name: ${response.mockData.name}`);
+                        }
+                    } else {
+                        log('❌ Could not get extension status');
+                    }
+                });
+            } else {
+                log('❌ Chrome extension runtime not available');
+            }
+            
+            // Check getUserMedia override
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                const getUserMediaString = navigator.mediaDevices.getUserMedia.toString();
+                if (getUserMediaString.includes('Mock Camera') || getUserMediaString.includes('Intercepting')) {
+                    log('✅ getUserMedia override detected');
+                } else {
+                    log('❌ getUserMedia override not detected');
+                }
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Mock Camera test website loaded');
+            
+            // Set up event listeners
+            document.getElementById('startCamera').addEventListener('click', startCamera);
+            document.getElementById('stopCamera').addEventListener('click', stopCamera);
+            document.getElementById('checkStatus').addEventListener('click', checkStatus);
+            
+            log('Event listeners setup complete');
+        });
+    </script>
+</body>
+</html>

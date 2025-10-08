@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Mock Camera</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .upload-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .preview-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        #preview {
+            width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.inactive {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #28a745;
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        .notification.info {
+            background: #17a2b8;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            color: #856404;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .test-section {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        #testVideo {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 8px;
+            background: #000;
+            margin: 20px 0;
+        }
+
+        .injection-script {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+
+        .injection-script h3 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+
+        .injection-script code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 Global Mock Camera</h1>
+            <p>Upload media and activate mock camera across ALL tabs</p>
+        </header>
+
+        <div class="content">
+            <div class="upload-section">
+                <h3>📁 Upload Media</h3>
+                <div class="file-upload" id="fileUploadArea">
+                    <div style="font-size: 3em; margin-bottom: 15px;">📁</div>
+                    <p><strong>Click to upload video or image</strong></p>
+                    <p><small>Supports: MP4, WebM, JPG, PNG</small></p>
+                    <input type="file" id="fileInput" accept="video/*,image/*">
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <h3>👁️ Preview</h3>
+                <img id="preview" alt="Preview">
+                <div id="fileInfo" class="file-info"></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="startMock" disabled>
+                    🌐 Start Global Mock Camera
+                </button>
+                <button class="btn btn-danger" id="stopMock" disabled>
+                    ⏹️ Stop Mock Camera
+                </button>
+            </div>
+
+            <div class="status inactive" id="status">
+                Mock Camera: Inactive
+            </div>
+
+            <div class="injection-script">
+                <h3>🔧 Cross-Tab Setup</h3>
+                <p>To make mock camera work across all tabs, you need to include this script in every page:</p>
+                <p><strong>Add this to any page that needs mock camera:</strong></p>
+                <code>&lt;script src="global-mock-inject.js"&gt;&lt;/script&gt;</code>
+                <p style="margin-top: 10px;"><strong>Or copy the script content and paste it into the browser console on any page.</strong></p>
+            </div>
+
+            <div class="test-section">
+                <h3>🧪 Test Your Mock Camera</h3>
+                <p>Click "Start Camera" below to test your mock camera stream:</p>
+                <video id="testVideo" autoplay muted playsinline></video>
+                <div class="controls">
+                    <button class="btn btn-success" id="startTest">📹 Start Camera</button>
+                    <button class="btn btn-danger" id="stopTest">⏹️ Stop Camera</button>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h3>📋 How to Use</h3>
+                <ol>
+                    <li><strong>Upload Media:</strong> Click the upload area and select a video or image file</li>
+                    <li><strong>Preview:</strong> Your media will appear in the preview section</li>
+                    <li><strong>Start Global Mock Camera:</strong> Click "Start Global Mock Camera" to activate across all tabs</li>
+                    <li><strong>Include Injection Script:</strong> Add the injection script to any page that needs mock camera</li>
+                    <li><strong>Test:</strong> Click "Start Camera" in the test section to see your mock feed</li>
+                    <li><strong>Test Other Tabs:</strong> Open the test website and verify mock camera works there too</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        let currentFile = null;
+        let mockActive = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Global Mock Camera: Loaded');
+            
+            // Set up file upload
+            const fileInput = document.getElementById('fileInput');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            
+            if (fileInput) {
+                fileInput.addEventListener('change', handleFileUpload);
+                console.log('Global Mock Camera: File input setup');
+            }
+            
+            if (fileUploadArea) {
+                fileUploadArea.addEventListener('click', function() {
+                    console.log('Global Mock Camera: Upload area clicked');
+                    fileInput.click();
+                });
+                console.log('Global Mock Camera: Upload area setup');
+            }
+            
+            // Set up buttons
+            const startMockBtn = document.getElementById('startMock');
+            const stopMockBtn = document.getElementById('stopMock');
+            const startTestBtn = document.getElementById('startTest');
+            const stopTestBtn = document.getElementById('stopTest');
+            
+            if (startMockBtn) {
+                startMockBtn.addEventListener('click', function(e) {
+                    console.log('Global Mock Camera: Start mock button clicked');
+                    e.preventDefault();
+                    startMockCamera();
+                });
+                console.log('Global Mock Camera: Start mock button setup');
+            } else {
+                console.error('Global Mock Camera: Start mock button not found');
+            }
+            
+            if (stopMockBtn) {
+                stopMockBtn.addEventListener('click', stopMockCamera);
+                console.log('Global Mock Camera: Stop mock button setup');
+            } else {
+                console.error('Global Mock Camera: Stop mock button not found');
+            }
+            
+            if (startTestBtn) {
+                startTestBtn.addEventListener('click', startTestCamera);
+                console.log('Global Mock Camera: Start test button setup');
+            } else {
+                console.error('Global Mock Camera: Start test button not found');
+            }
+            
+            if (stopTestBtn) {
+                stopTestBtn.addEventListener('click', stopTestCamera);
+                console.log('Global Mock Camera: Stop test button setup');
+            } else {
+                console.error('Global Mock Camera: Stop test button not found');
+            }
+            
+            // Check if mock camera is already active
+            checkMockCameraStatus();
+            
+            console.log('Global Mock Camera: All event listeners setup');
+        });
+
+        // Handle file upload
+        function handleFileUpload(event) {
+            console.log('Global Mock Camera: File input changed');
+            const file = event.target.files[0];
+            if (file) {
+                console.log('Global Mock Camera: File selected', file.name, file.type, file.size);
+                currentFile = file;
+                displayPreview(file);
+                document.getElementById('startMock').disabled = false;
+                showNotification('File uploaded successfully', 'success');
+            } else {
+                console.log('Global Mock Camera: No file selected');
+            }
+        }
+
+        // Display file preview
+        function displayPreview(file) {
+            const preview = document.getElementById('preview');
+            const fileInfo = document.getElementById('fileInfo');
+            
+            const url = URL.createObjectURL(file);
+            preview.src = url;
+            preview.style.display = 'block';
+            
+            fileInfo.innerHTML = `
+                <strong>File:</strong> ${file.name}<br>
+                <strong>Type:</strong> ${file.type}<br>
+                <strong>Size:</strong> ${formatFileSize(file.size)}
+            `;
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Start mock camera
+        function startMockCamera() {
+            console.log('Global Mock Camera: startMockCamera function called');
+            
+            if (!currentFile) {
+                console.log('Global Mock Camera: No file selected');
+                showNotification('Please upload a file first', 'error');
+                return;
+            }
+            
+            console.log('Global Mock Camera: Starting mock camera with file', currentFile.name);
+            
+            try {
+                // Check file size first (5MB limit)
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (currentFile.size > maxSize) {
+                    showNotification('File too large! Please use a file smaller than 5MB', 'error');
+                    return;
+                }
+                
+                console.log('Global Mock Camera: File size check passed, size:', currentFile.size);
+                
+                // Convert file to base64 and store in localStorage
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const base64Data = reader.result;
+                    console.log('Global Mock Camera: Base64 data size:', base64Data.length);
+                    
+                    // Check if base64 data is too large for localStorage
+                    if (base64Data.length > 4 * 1024 * 1024) { // 4MB base64 limit
+                        showNotification('File too large after conversion! Please use a smaller file (under 3MB)', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        const mockData = {
+                            type: currentFile.type.startsWith('video/') ? 'video' : 'image',
+                            data: base64Data,
+                            name: currentFile.name,
+                            size: currentFile.size,
+                            timestamp: Date.now()
+                        };
+                        
+                        // Store in localStorage for cross-tab access
+                        localStorage.setItem('globalMockCameraActive', 'true');
+                        localStorage.setItem('globalMockCameraData', JSON.stringify(mockData));
+                        
+                        mockActive = true;
+                        updateStatus('Global Mock Camera: Active', 'active');
+                        document.getElementById('startMock').disabled = true;
+                        document.getElementById('stopMock').disabled = false;
+                        showNotification('Global mock camera started across all tabs!', 'success');
+                        
+                        console.log('Global Mock Camera: Data stored in localStorage', mockData.type);
+                        
+                    } catch (storageError) {
+                        console.error('Global Mock Camera: Storage error:', storageError);
+                        if (storageError.name === 'QuotaExceededError') {
+                            showNotification('File too large for storage! Please use a smaller file (under 3MB)', 'error');
+                        } else {
+                            showNotification('Storage error: ' + storageError.message, 'error');
+                        }
+                    }
+                };
+                reader.readAsDataURL(currentFile);
+            } catch (error) {
+                console.error('Global Mock Camera: Error starting mock camera', error);
+                showNotification('Error starting mock camera', 'error');
+            }
+        }
+
+        // Stop mock camera
+        function stopMockCamera() {
+            // Clear localStorage
+            localStorage.removeItem('globalMockCameraActive');
+            localStorage.removeItem('globalMockCameraData');
+            
+            mockActive = false;
+            updateStatus('Mock Camera: Inactive', 'inactive');
+            document.getElementById('startMock').disabled = false;
+            document.getElementById('stopMock').disabled = true;
+            showNotification('Global mock camera stopped', 'info');
+            
+            console.log('Global Mock Camera: Data cleared from localStorage');
+        }
+
+        // Check mock camera status
+        function checkMockCameraStatus() {
+            const isActive = localStorage.getItem('globalMockCameraActive') === 'true';
+            const mockData = localStorage.getItem('globalMockCameraData');
+            
+            if (isActive && mockData) {
+                try {
+                    const data = JSON.parse(mockData);
+                    mockActive = true;
+                    updateStatus('Global Mock Camera: Active', 'active');
+                    document.getElementById('startMock').disabled = true;
+                    document.getElementById('stopMock').disabled = false;
+                    console.log('Global Mock Camera: Found active mock camera', data.type);
+                } catch (error) {
+                    console.error('Global Mock Camera: Error parsing mock data', error);
+                }
+            }
+        }
+
+        // Start test camera
+        function startTestCamera() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                    .then(stream => {
+                        const testVideo = document.getElementById('testVideo');
+                        testVideo.srcObject = stream;
+                        
+                        // Check if this is a mock stream
+                        const tracks = stream.getTracks();
+                        const videoTrack = tracks.find(track => track.kind === 'video');
+                        
+                        if (videoTrack) {
+                            const isMock = videoTrack.label.includes('Mock') || 
+                                          videoTrack.label.includes('Canvas') ||
+                                          videoTrack.deviceId === 'mock-camera' ||
+                                          videoTrack.label.includes('captureStream');
+                            
+                            if (isMock) {
+                                showNotification('Mock camera stream detected!', 'success');
+                            } else {
+                                showNotification('Real camera stream detected', 'error');
+                            }
+                        }
+                        
+                        showNotification('Camera stream started', 'info');
+                    })
+                    .catch(error => {
+                        console.error('Global Mock Camera: Error accessing camera', error);
+                        showNotification('Error accessing camera', 'error');
+                    });
+            } else {
+                showNotification('getUserMedia not supported', 'error');
+            }
+        }
+
+        // Stop test camera
+        function stopTestCamera() {
+            const testVideo = document.getElementById('testVideo');
+            if (testVideo.srcObject) {
+                testVideo.srcObject.getTracks().forEach(track => track.stop());
+                testVideo.srcObject = null;
+                showNotification('Test camera stopped', 'info');
+            }
+        }
+
+        // Update status display
+        function updateStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
