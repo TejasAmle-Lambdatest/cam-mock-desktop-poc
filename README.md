@@ -2,6 +2,15 @@
 
 A cross-tab mock camera system that allows you to replace real camera feeds with uploaded video/image files across multiple browser tabs. Perfect for testing web applications that require camera access without exposing your actual camera.
 
+## 🎬 Demo Video
+
+<video width="100%" controls>
+  <source src="Screen Recording 2025-10-08 at 3.58.08 PM.mov" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+**Watch the demo above to see the mock camera system in action!** 🎯
+
 ## 📋 Product Requirements Document (PRD)
 
 ### **Problem Statement**
@@ -175,58 +184,6 @@ localStorage.setItem('globalMockCameraActive', 'true');
 3. Verify localStorage contains `globalMockCameraActive: 'true'`
 4. Ensure `global-mock-inject.js` is loaded on the target page
 
----
-
-## 🔒 Security & Privacy
-
-### **Data Storage**
-- Files are stored locally in browser's localStorage
-- No data is sent to external servers
-- Files are automatically cleared when mock camera is stopped
-
-### **Privacy Protection**
-- Real camera is never accessed when mock is active
-- Mock camera works offline
-- No network requests for mock functionality
-
----
-
-## 🚀 Future Enhancements
-
-### **Planned Features**
-- [ ] **Audio support** for mock camera streams
-- [ ] **Multiple mock cameras** (front/back camera simulation)
-- [ ] **Video compression** for larger files
-- [ ] **Preset mock scenarios** (interview, presentation, etc.)
-- [ ] **Browser extension** for easier integration
-
-### **Technical Improvements**
-- [ ] **IndexedDB support** for larger files
-- [ ] **WebRTC simulation** for more realistic testing
-- [ ] **Performance optimization** for large files
-- [ ] **Cross-browser compatibility** testing
-
----
-
-## 📄 License
-
-This project is open source and available under the MIT License.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
-
----
-
-## 📞 Support
-
-If you encounter any issues or have questions:
-1. Check the troubleshooting section above
-2. Review browser console for error messages
-3. Ensure all files are served from the same domain
-4. Verify file size limits are respected
 
 ---
 
